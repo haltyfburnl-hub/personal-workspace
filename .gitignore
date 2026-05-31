@@ -1,0 +1,23 @@
+# Local private workspaces
+workspaces/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Local environment files
+.env
+.env.*
+
+# Generated exports
+exports/
+dist/
+build/
