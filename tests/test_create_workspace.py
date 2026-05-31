@@ -32,6 +32,15 @@ class CreateWorkspaceTests(unittest.TestCase):
         self.assertIn("company-profile.md", output)
         self.assertIn("interview-prep.md", output)
 
+    def test_render_workspace_plan_includes_target_folders_and_templates(self):
+        output = module.render_workspace_plan("Example Company", "company")
+        self.assertIn("Workspace: workspaces/example-company", output)
+        self.assertIn("Type: company", output)
+        self.assertIn("- sources/", output)
+        self.assertIn("- analysis/", output)
+        self.assertIn("- company-profile.md", output)
+        self.assertIn("- job-opportunity-review.md", output)
+
 
 if __name__ == "__main__":
     unittest.main()
