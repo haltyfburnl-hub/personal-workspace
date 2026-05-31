@@ -24,6 +24,14 @@ class CreateWorkspaceTests(unittest.TestCase):
         self.assertIn("company", module.TEMPLATE_MAP)
         self.assertIn("company-profile.md", module.TEMPLATE_MAP["company"])
 
+    def test_list_workspace_types_includes_templates(self):
+        output = module.list_workspace_types()
+        self.assertIn("company:", output)
+        self.assertIn("job:", output)
+        self.assertIn("interview:", output)
+        self.assertIn("company-profile.md", output)
+        self.assertIn("interview-prep.md", output)
+
 
 if __name__ == "__main__":
     unittest.main()
