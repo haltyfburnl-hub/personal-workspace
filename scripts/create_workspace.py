@@ -1,0 +1,79 @@
+#!/usr/bin/env python3
+"""Create a local research workspace from the repository templates."""
+
+from __future__ import annotations
+
+import argparse
+import re
+import shutil
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+TEMPLATE_DIR = ROOT / "templates"
+WORKSPACE_DIR = ROOT / "workspaces"
+
+TEMPLATE_MAP = {
+    "company": ["company-profile.md", "job-opportunity-review.md", "interview-prep.md"],
+    "job": ["job-opportunity-review.md", "interview-prep.md"],
+    "interview": ["interview-prep.md"],
+}
+
+
+def slugify(value: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
+    return slug or "workspace"
+
+
+def copy_template(template_name: str, target_dir: Path) -> None:
+    source = TEMPLATE_DIR / template_name
+    if not source.exists():
+        raise FileNotFoundError(f"Missing template: {source}")
+    shutil.copyfile(source, target_dir / template_name)
+
+
+def create_workspace(name: str, workspace_type: str) -> Path:
+    target_dir = WORKSPACE_DIR / slugify(name)
+    target_dir.mkdir(parents=True, exist_ok=False)
+
+    for folder in ["sources", "analysis", "drafts", "final"]:
+        (target_dir / folder).mkdir()
+
+    for template_name in TEMPLATE_MAP[workspace_type]:
+        copy_template(template_name, target_dir)
+
+    readme = target_dir / "README.md"
+    readme.write_text(
+        f"# {name}\n\n"
+        f"Workspace type: {workspace_type}\n\n"
+        "## Folders\n\n"
+        "- `sources/`: raw source notes and references.\n"
+        "- `analysis/`: working notes and judgments.\n"
+        "- `drafts/`: draft outputs.\n"
+        "- `final/`: reviewed deliverables.\n\n"
+        "Keep private materials local. Do not commit this workspace unless you intentionally want to publish it.\n",
+        encoding="utf-8",
+    )
+
+    return target_dir
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Create a local personal workspace.")
+    parser.add_argument("name", help="Workspace name, such as a company or role name.")
+    parser.add_argument(
+        "--type",
+        choices=sorted(TEMPLATE_MAP),
+        default="company",
+        help="Workspace type to create.",
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
+    target_dir = create_workspace(args.name, args.type)
+    print(f"Created workspace: {target_dir}")
+
+
+if __name__ == "__main__":
+    main()
