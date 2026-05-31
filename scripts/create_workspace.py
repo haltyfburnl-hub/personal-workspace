@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import shutil
 from pathlib import Path
@@ -20,8 +21,17 @@ TEMPLATE_MAP = {
 
 
 def slugify(value: str) -> str:
-    slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
-    return slug or "workspace"
+    """Return a stable filesystem-friendly slug.
+
+    Non-Latin names are common in company research. If a readable ASCII slug
+    cannot be produced, keep a stable short hash instead of collapsing every
+    name to the same `workspace` folder.
+    """
+    cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip().lower()).strip("-")
+    if cleaned:
+        return cleaned
+    digest = hashlib.sha1(value.encode("utf-8")).hexdigest()[:8]
+    return f"workspace-{digest}"
 
 
 def copy_template(template_name: str, target_dir: Path) -> None:
