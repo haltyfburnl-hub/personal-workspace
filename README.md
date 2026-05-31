@@ -16,6 +16,7 @@ This is an early open-source project. The repository is public, licensed, docume
 - Avoid mixing private personal data into public examples.
 - Turn informal research into structured documents that can be reviewed and improved.
 - Make AI-assisted output easier to audit before it is shared.
+- Compare multiple companies or roles with explicit criteria and source-backed judgment.
 
 ## Repository structure
 
@@ -62,10 +63,23 @@ python3 scripts/create_workspace.py "Example Role" --type job
 python3 scripts/create_workspace.py "Example Interview" --type interview
 ```
 
+## Included templates
+
+- `templates/company-profile.md`: capture company facts, products, market position, risks, and open questions.
+- `templates/company-comparison.md`: compare two or more companies or roles using explicit decision criteria.
+- `templates/job-opportunity-review.md`: evaluate whether a role is worth pursuing.
+- `templates/interview-prep.md`: prepare positioning, examples, likely questions, and closing notes.
+
+## Examples
+
+- `examples/example-company-workspace.md`: synthetic company workspace structure.
+- `examples/company-comparison-example.md`: synthetic comparison between two opportunities.
+
 ## Example use cases
 
 - Research a company before an interview.
 - Compare whether a role is worth pursuing.
+- Compare multiple companies before deciding where to spend preparation time.
 - Prepare a structured interview note from multiple source documents.
 - Build a repeatable personal knowledge base for work decisions.
 - Keep AI-generated drafts auditable by separating sources, analysis, and final outputs.
