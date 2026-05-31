@@ -57,6 +57,14 @@ The script creates a local workspace folder under `workspaces/` and copies the r
 
 ## Workspace types
 
+List supported workspace types:
+
+```bash
+python3 scripts/create_workspace.py --list-types
+```
+
+Create a workspace:
+
 ```bash
 python3 scripts/create_workspace.py "Example Company" --type company
 python3 scripts/create_workspace.py "Example Role" --type job
