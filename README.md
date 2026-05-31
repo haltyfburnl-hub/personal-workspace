@@ -1,12 +1,26 @@
 # Personal Workspace
 
-Personal Workspace is a lightweight open-source template for organizing AI-assisted research, career planning, company analysis, and reusable work documents.
+Personal Workspace is a lightweight open-source template for organizing AI-assisted research, career planning, company analysis, interview preparation, and reusable work documents.
 
-The project is designed for people who need a clear, repeatable workspace instead of scattered notes, screenshots, and one-off prompts. It provides a practical folder structure, reusable Markdown templates, and a small Python script that can create a clean workspace for a new company, role, project, or personal research topic.
+The project solves a practical problem: AI-assisted personal research often becomes a mix of scattered notes, prompts, screenshots, private context, and final drafts. That makes the work hard to audit, hard to reuse, and risky to publish. Personal Workspace provides a repeatable folder structure, Markdown templates, and a small Python script so users can keep sources, analysis, drafts, and reviewed outputs separate.
+
+## Why this project matters
+
+AI tools can help people turn messy research into useful decisions, but the workflow needs clear boundaries. A good personal research workspace should make it obvious:
+
+- which notes are raw sources;
+- which judgments are still working analysis;
+- which drafts were AI-assisted and need review;
+- which final materials are safe to share;
+- which folders must stay private and out of Git history.
+
+This repository makes that workflow public, reusable, and reviewable. It is intentionally small, but it addresses a real recurring need: company research, role evaluation, interview preparation, and personal knowledge work where privacy and auditability matter.
 
 ## Current status
 
-This is an early open-source project. The repository is public, licensed, documented, and includes a working script, templates, examples, contribution guidance, issue templates, and tests.
+This is an early open-source project. The repository is public, licensed, documented, and includes a working script, templates, examples, contribution guidance, issue templates, tests, GitHub Actions, and a first release.
+
+The project does not claim broad adoption yet. Its current value is that it turns a recurring AI-assisted research workflow into a public, inspectable, privacy-aware template that can be improved through issues and pull requests.
 
 ## What this project helps with
 
@@ -27,9 +41,14 @@ personal-workspace/
 |   `-- workflows/
 |-- docs/
 |   |-- api-credit-use-plan.md
+|   |-- demo.md
 |   |-- project-statement.md
+|   |-- security-model.md
 |   `-- workflows/
 |-- examples/
+|   |-- company-comparison-example.md
+|   |-- example-company-workspace.md
+|   `-- privacy-safe-case-study.md
 |-- scripts/
 |   `-- create_workspace.py
 |-- templates/
@@ -45,15 +64,27 @@ personal-workspace/
 
 ## Quick start
 
-Clone the repository and create a new workspace:
+Clone the repository and inspect available workspace types:
 
 ```bash
 git clone https://github.com/haltyfburnl-hub/personal-workspace.git
 cd personal-workspace
+python3 scripts/create_workspace.py --list-types
+```
+
+Preview a workspace without creating files:
+
+```bash
+python3 scripts/create_workspace.py "Example Company" --type company --dry-run
+```
+
+Create the workspace:
+
+```bash
 python3 scripts/create_workspace.py "Example Company" --type company
 ```
 
-The script creates a local workspace folder under `workspaces/` and copies the relevant templates into it.
+The script creates a local workspace folder under `workspaces/` and copies the relevant templates into it. The `workspaces/` folder is ignored by Git by default.
 
 ## Workspace types
 
@@ -71,6 +102,12 @@ python3 scripts/create_workspace.py "Example Role" --type job
 python3 scripts/create_workspace.py "Example Interview" --type interview
 ```
 
+Preview a workspace without writing files:
+
+```bash
+python3 scripts/create_workspace.py "Example Company" --type company --dry-run
+```
+
 ## Included templates
 
 - `templates/company-profile.md`: capture company facts, products, market position, risks, and open questions.
@@ -78,10 +115,13 @@ python3 scripts/create_workspace.py "Example Interview" --type interview
 - `templates/job-opportunity-review.md`: evaluate whether a role is worth pursuing.
 - `templates/interview-prep.md`: prepare positioning, examples, likely questions, and closing notes.
 
-## Examples
+## Examples and docs
 
+- `docs/demo.md`: end-to-end walkthrough from command usage to generated workspace structure.
+- `docs/security-model.md`: privacy and security boundaries for local AI-assisted research.
 - `examples/example-company-workspace.md`: synthetic company workspace structure.
 - `examples/company-comparison-example.md`: synthetic comparison between two opportunities.
+- `examples/privacy-safe-case-study.md`: privacy-safe case study based on recurring research workflows.
 
 ## Example use cases
 
@@ -105,6 +145,7 @@ python -m unittest discover -s tests -p "test_*.py"
 The project is maintained through:
 
 - GitHub issues for bugs and template requests.
+- Pull requests for visible review and change history.
 - A public roadmap for planned improvements.
 - A changelog for visible project history.
 - A contribution guide for outside changes.

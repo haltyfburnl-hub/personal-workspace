@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE_DIR = ROOT / "templates"
 WORKSPACE_DIR = ROOT / "workspaces"
+WORKSPACE_FOLDERS = ["sources", "analysis", "drafts", "final"]
 
 TEMPLATE_MAP = {
     "company": ["company-profile.md", "job-opportunity-review.md", "interview-prep.md"],
@@ -34,12 +35,39 @@ def slugify(value: str) -> str:
     return f"workspace-{digest}"
 
 
+def display_path(path: Path) -> Path:
+    """Return a repository-relative path when possible."""
+    try:
+        return path.relative_to(ROOT)
+    except ValueError:
+        return path
+
+
+def workspace_target(name: str) -> Path:
+    return WORKSPACE_DIR / slugify(name)
+
+
 def list_workspace_types() -> str:
     """Return supported workspace types and their templates."""
     lines = []
     for workspace_type in sorted(TEMPLATE_MAP):
         templates = ", ".join(TEMPLATE_MAP[workspace_type])
         lines.append(f"{workspace_type}: {templates}")
+    return "\n".join(lines)
+
+
+def render_workspace_plan(name: str, workspace_type: str) -> str:
+    """Return the workspace structure without creating files."""
+    target_dir = workspace_target(name)
+    lines = [
+        f"Workspace: {display_path(target_dir)}",
+        f"Type: {workspace_type}",
+        "",
+        "Folders:",
+    ]
+    lines.extend(f"- {folder}/" for folder in WORKSPACE_FOLDERS)
+    lines.extend(["", "Templates:"])
+    lines.extend(f"- {template_name}" for template_name in TEMPLATE_MAP[workspace_type])
     return "\n".join(lines)
 
 
@@ -51,10 +79,10 @@ def copy_template(template_name: str, target_dir: Path) -> None:
 
 
 def create_workspace(name: str, workspace_type: str) -> Path:
-    target_dir = WORKSPACE_DIR / slugify(name)
+    target_dir = workspace_target(name)
     target_dir.mkdir(parents=True, exist_ok=False)
 
-    for folder in ["sources", "analysis", "drafts", "final"]:
+    for folder in WORKSPACE_FOLDERS:
         (target_dir / folder).mkdir()
 
     for template_name in TEMPLATE_MAP[workspace_type]:
@@ -90,6 +118,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="List supported workspace types and exit.",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Preview the workspace structure without creating folders or files.",
+    )
     args = parser.parse_args()
     if not args.list_types and not args.name:
         parser.error("the following arguments are required: name")
@@ -102,8 +135,12 @@ def main() -> None:
         print(list_workspace_types())
         return
 
+    if args.dry_run:
+        print(render_workspace_plan(args.name, args.type))
+        return
+
     target_dir = create_workspace(args.name, args.type)
-    print(f"Created workspace: {target_dir}")
+    print(f"Created workspace: {display_path(target_dir)}")
 
 
 if __name__ == "__main__":
