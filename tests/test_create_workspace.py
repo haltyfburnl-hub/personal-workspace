@@ -1,4 +1,5 @@
 import importlib.util
+import unittest
 from pathlib import Path
 
 SCRIPT_PATH = Path(__file__).resolve().parents[1] / "scripts" / "create_workspace.py"
@@ -8,18 +9,21 @@ module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)
 
 
-def test_slugify_latin_name():
-    assert module.slugify("Example Company") == "example-company"
+class CreateWorkspaceTests(unittest.TestCase):
+    def test_slugify_latin_name(self):
+        self.assertEqual(module.slugify("Example Company"), "example-company")
+
+    def test_slugify_non_latin_name_is_stable(self):
+        first = module.slugify("示例公司")
+        second = module.slugify("示例公司")
+        self.assertEqual(first, second)
+        self.assertTrue(first.startswith("workspace-"))
+        self.assertEqual(len(first), len("workspace-12345678"))
+
+    def test_template_map_contains_company_workflow(self):
+        self.assertIn("company", module.TEMPLATE_MAP)
+        self.assertIn("company-profile.md", module.TEMPLATE_MAP["company"])
 
 
-def test_slugify_non_latin_name_is_stable():
-    first = module.slugify("示例公司")
-    second = module.slugify("示例公司")
-    assert first == second
-    assert first.startswith("workspace-")
-    assert len(first) == len("workspace-12345678")
-
-
-def test_template_map_contains_company_workflow():
-    assert "company" in module.TEMPLATE_MAP
-    assert "company-profile.md" in module.TEMPLATE_MAP["company"]
+if __name__ == "__main__":
+    unittest.main()
